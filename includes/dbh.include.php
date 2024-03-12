@@ -1,8 +1,8 @@
 <?php
 
-$dsn = "mysql:host=sql205.infinityfree.com;dbname=if0_36143582_groupe34";
-$dbusername = "if0_36143582";
-$dbpassword ="groupe34csi";
+$dsn = "mysql:host=sql203.infinityfree.com;if0_36149169_hotel_management";
+$dbusername = "if0_36149169";
+$dbpassword ="Csigroupe34";
 
 try{
     $pdo = new PDO($dsn, $dbusername,$dbpassword);
