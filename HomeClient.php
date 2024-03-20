@@ -3,10 +3,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $zone = $_POST["zone"];
 
     try{
-        require_once "include/dbh.include.php";
-        $query = "Select * From hotel where zone = ?";
+        require_once "includes/dbh.include.php";
+        $query = "SELECT * From hotel where zone = ? ";
 
         $stmt = $pdo->prepare($query);
+
+        //$stmt ->bindParam(":zone", $zone);
 
         $stmt->execute([$zone]);
 
@@ -23,12 +25,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
 } else{
     try{
-        require_once "include/dbh.include.php";
-        $query = "Select * From hotel";
+        require_once "includes/dbh.include.php";
+        $query = "SELECT * From hotel";
 
         $stmt = $pdo->prepare($query);
-
-        $stmt->execute([]);
+        
+        $stmt->execute();
 
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
@@ -40,12 +42,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     } catch (PDOException $e){
         die("Query failed: " . $e->getMessage());
-    };
+    }
 }
 ?>
 
 
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -74,12 +76,21 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
             foreach($results as $row){
                 echo "</tr>";
-                echo "<td>" + $row["nom_de_chaine"] +"</td>";
-                echo "<td>" + $row["adresse"] +"</td>";
-                echo "<td>" + $row["nombre_de_chambre"] +"</td>";
-                echo "<td>" + $row["zone"] +"</td>";
-                echo "<td>" + $row["classe"] +"</td>";
-                echo "</tr>";
+                echo "<td>"; 
+                echo htmlspecialchars($row['nom_de_chaine']);
+                echo "</td>";
+                echo "<td>"; 
+                echo htmlspecialchars($row['adresse']);
+                echo "</td>";
+                echo "<td>"; 
+                echo htmlspecialchars($row['nombre_de_chambre']);
+                echo "</td>";
+                echo "<td>"; 
+                echo htmlspecialchars($row['zone']);
+                echo "</td>";
+                echo "<td>"; 
+                echo htmlspecialchars($row['classe']);
+                echo "</td>";
             }
 
             echo "</table>'";

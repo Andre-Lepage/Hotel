@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -29,7 +29,10 @@
         <input type="submit" value="Submit">
     </form>
 
-    <form action="HomeClient.php" method="get">
+    <form action="HomeClient.php" method="post">
+        <label for="zone">zone</label>
+        <input type="text" id="zone" name="zone">
+        <br>
         <input type="submit" value="Go to HotelPage">
     </form>
 </body>
