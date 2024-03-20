@@ -29,7 +29,7 @@
         <input type="submit" value="Submit">
     </form>
 
-    <form action="HomeClient" method="get">
+    <form action="HomeClient.php" method="get">
         <input type="submit" value="Go to HotelPage">
     </form>
 </body>
