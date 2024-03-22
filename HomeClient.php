@@ -5,22 +5,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     try{
         require_once "includes/dbh.include.php";
         $query = "SELECT * From hotel where zone = ? ";
-
         $stmt = $pdo->prepare($query);
-
-        //$stmt ->bindParam(":zone", $zone);
-
         $stmt->execute([$zone]);
-
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $choicesQuery = "SELECT zone From hotel";
-
+        $choicesQuery = "SELECT Unique zone From hotel";
         $stmt = $pdo->prepare($choicesQuery);
-        
         $stmt->execute();
-
         $choicesResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $roomsAvailableQuery = "SELECT count(*) From chambre where zone = ? ";
+        $stmt = $pdo->prepare($roomsAvailableQuery);
+        $stmt->execute([$zone]);
+        $roomsAvailableresults = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
         $pdo = null;
         $stmt = null;
@@ -42,7 +39,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
         //$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $choicesQuery = "SELECT zone From hotel";
+        $choicesQuery = "SELECT UNIQUE zone From hotel";
 
         $stmt = $pdo->prepare($choicesQuery);
         
@@ -75,9 +72,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 <body>
 
-
+    
     <h1> Chambres disponible par zone</h1>
 
+    <p>
+    <?php
+    if($results == null ){
+            
+    } else{
+        foreach($choicesResults as $row){
+            echo "Nombre de chambre disponible dans $zone: ";
+            echo $row["count"];
+        }
+    }
+    
+        
+    ?>
+    </p>
 
     <form action="HomeClient.php" method="post">
     <select name="zone" id="zone">
@@ -111,6 +122,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             echo "<th>nombre de chambre</th>";
             echo "<th>Zone</th>";
             echo "<th>classe</th>";
+            echo "<th>View rooms</th>";
             echo "</tr>";
 
             foreach($results as $row){
@@ -128,6 +140,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 echo htmlspecialchars($row['zone']);
                 echo "</td>";
                 echo "<td>"; 
+                echo htmlspecialchars($row['classe']);
+                echo "</td>";
+                echo "<td>"; 
+                echo "<form action='processupload.php?adresse=";
+                echo htmlspecialchars($row['adresse']);
+                echo "?nom_de_chaine=";
+                echo htmlspecialchars($row['nom_de_chaine']);
+                echo  "' method='post' enctype='multipart/form-data' id='MyUploadForm'>";
                 echo htmlspecialchars($row['classe']);
                 echo "</td>";
             }
