@@ -13,6 +13,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $stmt->execute([$zone]);
 
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $choicesQuery = "SELECT zone From hotel";
+
+        $stmt = $pdo->prepare($choicesQuery);
+        
+        $stmt->execute();
+
+        $choicesResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
         $pdo = null;
         $stmt = null;
@@ -26,16 +34,25 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 } else{
     try{
         require_once "includes/dbh.include.php";
-        $query = "SELECT * From hotel";
+        //$query = "SELECT * From hotel";
 
-        $stmt = $pdo->prepare($query);
+        //$stmt = $pdo->prepare($query);
+        
+       // $stmt->execute();
+
+        //$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $choicesQuery = "SELECT zone From hotel";
+
+        $stmt = $pdo->prepare($choicesQuery);
         
         $stmt->execute();
 
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $choicesResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
         $pdo = null;
         $stmt = null;
+        $results = null;
 
         //header("Location: ../index.php");
 
@@ -58,14 +75,36 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 <body>
 
-    <?php
-        if(empty($results)){
-            echo "<div>";
-            echo "<p> No Hotels in that zone </p>";
-            echo "</div>";
-        } else{
 
-            echo "<table style='width:100%>'";
+    <h1> Chambres disponible par zone</h1>
+
+
+    <form action="HomeClient.php" method="post">
+    <select name="zone" id="zone">
+    <?php
+    foreach($choicesResults as $row){
+        echo "<option value='";
+        echo $row["zone"];
+        echo "'>";
+        echo $row["zone"];
+        echo "</option>";
+    }
+
+    ?>
+    </select>
+    <input type="submit" value="Submit">
+    </form>
+
+    <?php
+        if($results == null ){
+            
+        } elseif(empty($results)){
+            echo "<div>'";
+            echo "<p> no hotels in this zone</p>";
+            echo "</div";
+        }else{
+
+            echo "<table style='width:100%'>";
             echo "<tr>";
             echo "<th>Chaine hotel</th>";
             echo "<th>adresse</th>";
