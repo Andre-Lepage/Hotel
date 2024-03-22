@@ -39,7 +39,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
         //$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $choicesQuery = "SELECT UNIQUE zone From hotel";
+        $choicesQuery = "SELECT Distinct zone From hotel";
 
         $stmt = $pdo->prepare($choicesQuery);
         
