@@ -9,14 +9,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $stmt->execute([$zone]);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $choicesQuery = "SELECT Unique zone From hotel";
+        $choicesQuery = "SELECT Distinct zone From hotel";
         $stmt = $pdo->prepare($choicesQuery);
         $stmt->execute();
         $choicesResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $roomsAvailableQuery = "SELECT count(*) From chambre where zone = ? ";
+        $roomsAvailableQuery = "SELECT zone, sum(nombre_de_chambre) From hotel Group by zone";
         $stmt = $pdo->prepare($roomsAvailableQuery);
-        $stmt->execute([$zone]);
+        $stmt->execute();
         $roomsAvailableresults = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
         $pdo = null;
@@ -46,10 +46,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $stmt->execute();
 
         $choicesResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $roomsAvailableQuery = "SELECT zone, sum(nombre_de_chambre) From hotel Group by zone";
+        $stmt = $pdo->prepare($roomsAvailableQuery);
+        $stmt->execute();
+        $roomsAvailableresults = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
         $pdo = null;
         $stmt = null;
         $results = null;
+
+        
 
         //header("Location: ../index.php");
 
@@ -73,24 +80,37 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <body>
 
     
-    <h1> Chambres disponible par zone</h1>
+    <h1>Chercher les Hotels par zone</h1>
 
+    <h3>chambres disponible par zone</h3>
     <p>
     <?php
-    if($results == null ){
-            
-    } else{
-        foreach($choicesResults as $row){
-            echo "Nombre de chambre disponible dans $zone: ";
-            echo $row["count"];
-        }
+    echo "<table style='width:100%'>";
+    echo "<tr>";
+    foreach($roomsAvailableresults as $row){
+        echo "<th>";
+        echo $row["zone"];
+        echo "</th>";
     }
-    
+    echo "<tr>";
+
+    echo "<tr>";
+    foreach($roomsAvailableresults as $row){
+        echo "<td>";
+        echo $row["sum(nombre_de_chambre)"];
+        echo "</td>";
+    }
+    echo "<tr>";
+    echo "</table>'";
         
+    
+    
+    
     ?>
     </p>
 
     <form action="HomeClient.php" method="post">
+    <label for="zone">Choisis la zone où vous voulez rester</label>
     <select name="zone" id="zone">
     <?php
     foreach($choicesResults as $row){
@@ -105,15 +125,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     </select>
     <input type="submit" value="Submit">
     </form>
-
+    <br>
+    <br>
     <?php
         if($results == null ){
             
         } elseif(empty($results)){
             echo "<div>'";
-            echo "<p> no hotels in this zone</p>";
+            echo "<p> aucun hotel disponible dans cette zone</p>";
             echo "</div";
         }else{
+            echo "<p> Hotels disponible à: $zone </p> <br>";
 
             echo "<table style='width:100%'>";
             echo "<tr>";
@@ -143,12 +165,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 echo htmlspecialchars($row['classe']);
                 echo "</td>";
                 echo "<td>"; 
-                echo "<form action='processupload.php?adresse=";
-                echo htmlspecialchars($row['adresse']);
-                echo "?nom_de_chaine=";
-                echo htmlspecialchars($row['nom_de_chaine']);
-                echo  "' method='post' enctype='multipart/form-data' id='MyUploadForm'>";
-                echo htmlspecialchars($row['classe']);
+                echo "<form action='HotelPageClient.php' method='post'>";
+                echo "<input type='hidden' id='adresse' name='adresse' value='" . htmlspecialchars($row['adresse']) . "'>";
+                echo "<input type='hidden' id='nom_de_chaine' name='nom_de_chaine' value='" . htmlspecialchars($row['nom_de_chaine']) . "'>";
+                echo "<input type='submit' value='view rooms'>";
+                echo "</form>"; 
                 echo "</td>";
             }
 
